@@ -1,36 +1,149 @@
-# Spotify Playlist Generator Basics
+# Spotify Playlist Generators
 
-## Files
-- `.env` — Spotify credentials
-- `python/create_playlist.py` — creates a Spotify playlist from a JSONL file
-- `data/output/` — put your generator output files here
+## Python Environment (uv)
 
-## Install
+This project uses **uv** as the Python package manager and runner.
+
+### Install dependencies
+
 ```bash
-pip install -r requirements.txt
+uv add spotipy python-dotenv
 ```
 
-## .env
-Fill in:
-- `SPOTIFY_CLIENT_ID`
-- `SPOTIFY_CLIENT_SECRET`
-- `SPOTIFY_REDIRECT_URI`
-- `SPOTIFY_USER_ID`
+### Run scripts
 
-## Expected JSONL format
-One JSON object per line, for example:
+Use `uv run` to execute Python scripts in the project environment:
+
+```bash
+uv run python python/create_playlist.py <path_to_jsonl> --name "Playlist Name"
+```
+
+**Notes:**
+
+- `uv` creates and manages a virtual environment automatically  
+- No need to manually activate a venv  
+- `pyproject.toml` and `uv.lock` define the environment  
+
+---
+
+## Overview
+
+This repository contains multiple **playlist generators** based on Spotify data.
+
+Each generator is an independent program that:
+
+1. Takes input data (e.g. streaming history, seeds, config)
+2. Applies an algorithm
+3. Outputs a JSONL file of track candidates
+4. Can be used with the Python uploader to create a Spotify playlist
+
+---
+
+## Data Flow
+
+```text
+Input data → C++ generator → JSONL → Python → Spotify playlist
+```
+
+---
+
+## Input Data
+
+Generators may use different types of input:
+
+- **Spotify streaming history**
+
+  ```text
+  data/raw/<user>/
+  ```
+
+- **Preprocessed data**
+
+  ```text
+  data/processed/
+  ```
+
+- **Custom inputs** (e.g. seeds, configs)
+
+---
+
+## Output Format (JSONL)
+
+All generators must output a JSONL file:
+
+```text
+data/output/<name>.jsonl
+```
+
+Each line:
+
 ```json
-{"uri":"spotify:track:4uLU6hMCjMI75M1A2tKUQC"}
-{"id":"1301WleyT98MSxVHPZCA6M"}
-{"track_id":"3n3Ppam7vgaVa1iaRUc9Lp"}
+{"uri":"spotify:track:..."}
 ```
 
-## Run
+---
+
+## Running Generators
+
+Each generator defines its own interface.
+
+### Example
+
 ```bash
-python python/create_playlist.py data/output/mood.jsonl --name "Mood Playlist"
+./build/spotify_timemachine <user>
 ```
 
-For a public playlist:
+---
+
+## Uploading to Spotify
+
 ```bash
-python python/create_playlist.py data/output/mood.jsonl --name "Mood Playlist" --public
+uv run python python/create_playlist.py <path_to_jsonl> --name "Playlist Name"
 ```
+
+### Example
+
+```bash
+uv run python python/create_playlist.py data/output/art/spotify_timemachine.jsonl --name "Time Machine"
+```
+
+---
+
+## Generator Design Principles
+
+- Generators are **independent tools**
+- Input/output is **file-based**
+- Output format is **standardized (JSONL)**
+- No generator depends on another
+
+---
+
+## Example Generators
+
+### spotify_timemachine
+
+**Input:**
+- user streaming history
+
+**Output:**
+- tracks that dominated listening in time windows
+
+---
+
+## Adding a New Generator
+
+1. Create:
+
+```text
+cpp/generators/<name>.cpp
+```
+
+2. Define its inputs (arguments, files, etc.)
+
+3. Output:
+
+```text
+data/output/<name>.jsonl
+```
+
+4. Ensure JSONL format is valid

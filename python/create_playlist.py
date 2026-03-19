@@ -61,7 +61,6 @@ def load_required_env() -> dict:
         "SPOTIFY_CLIENT_ID",
         "SPOTIFY_CLIENT_SECRET",
         "SPOTIFY_REDIRECT_URI",
-        "SPOTIFY_USER_ID",
     ]
     values = {key: os.getenv(key, "").strip() for key in keys}
     missing = [key for key, value in values.items() if not value]
@@ -138,8 +137,7 @@ def main() -> None:
 
     track_uris = read_track_uris(Path(args.jsonl_file))
 
-    playlist = sp.user_playlist_create(
-        user=env["SPOTIFY_USER_ID"],
+    playlist = sp.current_user_playlist_create(
         name=args.name,
         public=args.public,
         description=args.description,
