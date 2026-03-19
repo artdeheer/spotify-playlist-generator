@@ -1,0 +1,68 @@
+# =========================
+
+# Python / uv
+
+# =========================
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+.env.*
+.python-version
+
+# uv cache
+
+.uv/
+
+# =========================
+
+# C++
+
+# =========================
+
+build/
+bin/
+*.o
+*.out
+*.exe
+*.a
+*.so
+*.dylib
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+compile_commands.json
+
+# =========================
+
+# OS / Editor junk
+
+# =========================
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# =========================
+
+# Project data
+
+# =========================
+
+data/output/*
+!data/output/.gitkeep
+
+# =========================
+
+# Logs
+
+# =========================
+
+*.log
